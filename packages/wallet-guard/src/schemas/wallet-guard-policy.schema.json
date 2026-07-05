@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WalletGuardPolicy",
+  "description": "Policy schema for AGENTROPOLIS-PAYRAIL wallet guardrails. No agent gets raw wallet power.",
+  "type": "object",
+  "required": [
+    "policyId",
+    "agentId",
+    "maxSpendPerTaskUsdc",
+    "maxSpendPerDayUsdc",
+    "approvalThresholdUsdc",
+    "allowedDistricts",
+    "blockedDistricts",
+    "dryRun"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "policyId": {
+      "type": "string",
+      "description": "Unique identifier for this policy"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "The agent this policy governs. Use '*' for a global default."
+    },
+    "maxSpendPerTaskUsdc": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum USDC allowed per individual task. Tasks above this limit are rejected."
+    },
+    "maxSpendPerDayUsdc": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum USDC the agent may spend in a rolling 24-hour window."
+    },
+    "approvalThresholdUsdc": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Tasks at or above this amount require explicit human or supervisor-agent approval before settlement."
+    },
+    "allowedDistricts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Districts this agent is permitted to bill. Use ['*'] to allow all districts not explicitly blocked."
+    },
+    "blockedDistricts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Districts this agent is NEVER permitted to bill, regardless of other rules."
+    },
+    "dryRun": {
+      "type": "boolean",
+      "description": "When true, all payment flows are simulated — no real funds move. Always true in development."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Human-readable notes about this policy."
+    }
+  }
+}

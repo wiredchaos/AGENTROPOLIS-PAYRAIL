@@ -1,0 +1,25 @@
+{
+  "name": "@agentropolis/recipe-whale-watcher-54",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Whale Watcher 54 — monitors wallet activity and fires threshold alerts",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@agentropolis/payrail-core": "workspace:*",
+    "@agentropolis/wallet-guard": "workspace:*",
+    "@agentropolis/receipt-engine": "workspace:*",
+    "@agentropolis/pricing-rules": "workspace:*"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  }
+}
