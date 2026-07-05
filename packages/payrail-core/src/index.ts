@@ -79,11 +79,10 @@ export function formatTimestamp(date: Date): string {
   return date.toISOString();
 }
 
-/** Generate a simple prefixed ID (not cryptographically secure — use uuid in production) */
+/** Generate a prefixed unique ID using crypto.randomUUID() (Node.js 15.6+) */
 export function generateId(prefix: string): string {
-  const rand = Math.random().toString(36).slice(2, 10);
-  const ts = Date.now().toString(36);
-  return `${prefix}_${ts}_${rand}`;
+  const uuid = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  return `${prefix}_${uuid}`;
 }
 
 /** Clamp a number to a min/max range */

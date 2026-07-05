@@ -39,6 +39,11 @@ export type GuardDecision =
 /** TODO: Phase 1 — replace with persistent daily spend tracker (DB/Redis) */
 const dailySpendTracker = new Map<string, { total: UsdcAmount; date: string }>();
 
+console.warn(
+  "[wallet-guard] WARNING: Using in-memory daily spend tracker. " +
+    "Limits reset on restart — replace with persistent storage in Phase 1 before production use."
+);
+
 function getDailySpend(agentId: string): UsdcAmount {
   const today = new Date().toISOString().slice(0, 10);
   const entry = dailySpendTracker.get(agentId);

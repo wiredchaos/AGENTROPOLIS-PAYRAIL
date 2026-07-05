@@ -70,6 +70,11 @@ export interface CreateReceiptInput {
 /** TODO: Phase 1 — replace in-memory store with SQLite / Postgres persistence */
 const receiptStore = new Map<ReceiptId, AgentTaskReceipt>();
 
+console.warn(
+  "[receipt-engine] WARNING: Using in-memory receipt store. All receipts are lost on restart. " +
+    "Replace with persistent storage in Phase 1."
+);
+
 // ---------------------------------------------------------------------------
 // Core functions
 // ---------------------------------------------------------------------------

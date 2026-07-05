@@ -58,6 +58,8 @@ app.post("/pay", (req: Request, res: Response) => {
 
 // ---------------------------------------------------------------------------
 // Global error handler
+// Express requires all four parameters for error-handling middleware, even
+// if _next is unused. The underscore prefix suppresses the unused-variable warning.
 // ---------------------------------------------------------------------------
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error("[gateway-api] Unhandled error:", err.message);

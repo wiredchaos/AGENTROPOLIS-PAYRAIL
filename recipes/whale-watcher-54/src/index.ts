@@ -273,6 +273,9 @@ async function runWhaleWatcher54(): Promise<void> {
 
 // Entry point
 runWhaleWatcher54().catch((err: unknown) => {
-  console.error("[whale-watcher-54] Fatal error:", err);
+  const message = err instanceof Error ? err.message : String(err);
+  const stack = err instanceof Error ? err.stack : undefined;
+  console.error("[whale-watcher-54] Fatal error:", message);
+  if (stack) console.error(stack);
   process.exit(1);
 });
