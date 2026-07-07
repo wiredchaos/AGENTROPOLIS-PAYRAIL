@@ -1,0 +1,12 @@
+{
+  "name": "@agentropolis/dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ops dashboard for AGENTROPOLIS-PAYRAIL (coming Phase 2)",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "echo 'Dashboard not yet implemented. Coming Phase 2.'",
+    "build": "echo 'Dashboard not yet implemented. Coming Phase 2.'",
+    "clean": "rm -rf dist"
+  }
+}

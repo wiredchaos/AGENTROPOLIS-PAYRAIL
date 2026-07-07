@@ -1,2 +1,131 @@
 # AGENTROPOLIS-PAYRAIL
-Agentropolis micropayment rail for autonomous agents, district billing, wallet guardrails, task receipts, and audit-safe AI commerce.
+
+> **"No agent gets raw wallet power."**
+
+The micropayment rail for autonomous agents inside **Agentropolis**. AGENTROPOLIS-PAYRAIL handles district billing, wallet guardrails, task receipts, spending limits, dry-run mode, and audit-safe AI commerce.
+
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![pnpm workspaces](https://img.shields.io/badge/pnpm-workspaces-orange)](https://pnpm.io/workspaces)
+
+---
+
+## What Is This?
+
+AGENTROPOLIS-PAYRAIL is the financial nervous system of Agentropolis — a city-scale multi-agent simulation where every agent, district, and NPC can request and settle micropayments for tasks. The rail ensures:
+
+- **Agents never hold raw private keys** — all payment authority flows through policy-gated guardrails.
+- **Every task creates an auditable receipt** — immutable, structured, query-able.
+- **Spending is bounded by policy** — per-task limits, daily limits, approval thresholds.
+- **Dry-run mode** — all flows can be simulated without moving real funds.
+- **District billing** — costs are attributed to the correct district/department.
+
+---
+
+## Architecture
+
+```
+AGENTROPOLIS-PAYRAIL/
+├── apps/
+│   ├── gateway-api/        # REST gateway — agent-facing payment API
+│   └── dashboard/          # Ops dashboard (coming soon)
+│
+├── packages/
+│   ├── payrail-core/       # Shared types, utilities, constants
+│   ├── wallet-guard/       # Policy engine — enforces spend limits & guardrails
+│   ├── receipt-engine/     # Creates, validates, and stores task receipts
+│   ├── pricing-rules/      # District pricing rules (JSON-configurable)
+│   └── x402-adapter/       # x402 / USDC settlement adapter (stub — real keys NOT here)
+│
+└── recipes/
+    ├── whale-watcher-54/          # Monitors wallet activity, mock alert + receipt
+    ├── osint-fee-search/          # OSINT fee estimation recipe
+    ├── terra54-property-check/    # Property data lookup recipe
+    └── npc-prompt-execution/      # NPC task execution via prompt
+```
+
+### Request Flow
+
+```
+Agent Task Request
+      │
+      ▼
+ gateway-api  ──►  wallet-guard (policy check)
+      │                  │
+      │          [policy: allowed / dry-run / blocked]
+      │                  │
+      ▼                  ▼
+ pricing-rules      receipt-engine
+      │                  │
+      ▼                  ▼
+ x402-adapter  ──►  [TODO: real settlement]
+      │
+      ▼
+ Task Receipt  ──►  audit log
+```
+
+---
+
+## Safety Model
+
+| Principle | Implementation |
+|-----------|---------------|
+| No raw wallet power | Agents receive signed receipts, never keys |
+| Policy-gated spending | `wallet-guard` enforces per-task & daily limits |
+| Dry-run by default (dev) | `dryRun: true` in policy — no funds move |
+| Audit trail | Every task generates a structured receipt |
+| Blocked districts | Policy denies payments to restricted districts |
+| Approval threshold | Amounts above threshold require explicit approval |
+| No seed phrase storage | x402-adapter uses external signing — never stores mnemonics |
+
+---
+
+## MVP Roadmap
+
+### Phase 0 — Scaffold ✅
+- [x] Monorepo structure (pnpm workspaces)
+- [x] TypeScript configs
+- [x] Gateway API with health check
+- [x] Wallet guard policy schema
+- [x] Receipt schema
+- [x] Pricing rule examples
+- [x] Whale Watcher 54 recipe (mock)
+
+### Phase 1 — Core Plumbing
+- [ ] Full wallet-guard policy evaluation engine
+- [ ] Receipt persistence (SQLite / Postgres)
+- [ ] Gateway API `/pay` endpoint (dry-run only)
+- [ ] District billing aggregation
+- [ ] Dashboard skeleton
+
+### Phase 2 — Settlement
+- [ ] x402 integration (external signing service)
+- [ ] USDC on Base testnet (dry-run → real)
+- [ ] Approval flow for high-value tasks
+- [ ] Webhook receipt delivery
+
+### Phase 3 — Production
+- [ ] Multi-district policy management
+- [ ] Real-time spending dashboard
+- [ ] Audit export (CSV / JSON)
+- [ ] Rate limiting & agent authentication
+
+---
+
+## Quick Start
+
+```bash
+# Prerequisites: Node.js 20+, pnpm 9+
+
+pnpm install
+pnpm build
+pnpm --filter gateway-api dev
+```
+
+Health check: `GET http://localhost:3000/health`
+
+---
+
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE).
