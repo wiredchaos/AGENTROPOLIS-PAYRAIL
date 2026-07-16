@@ -47,7 +47,9 @@ export const EVM_CHAINS = {
     name: "Base",
     slug: "base",
     nativeCurrency: "ETH",
-    dryRunByDefault: false,
+    // Mainnet remains dry-run until approval, signer, allowance, and
+    // settlement gates are implemented and explicitly enabled.
+    dryRunByDefault: true,
     enabled: true,
   },
   BASE_SEPOLIA: {
@@ -76,6 +78,10 @@ export const EVM_CHAINS = {
   },
 } as const satisfies Record<string, EvmChainConfig>;
 
+/**
+ * Base is the architectural default, but it is intentionally non-settling
+ * until the documented mainnet approval gates exist.
+ */
 export const DEFAULT_EVM_CHAIN = EVM_CHAINS.BASE;
 
 export interface WalletExecutionContext {
