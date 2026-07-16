@@ -3,7 +3,7 @@
 // Shared types, utilities, and constants used across the monorepo.
 // ---------------------------------------------------------------------------
 
-export const PAYRAIL_VERSION = "0.1.0";
+export const PAYRAIL_VERSION = "0.2.0";
 
 // ---------------------------------------------------------------------------
 // Core domain types
@@ -20,6 +20,78 @@ export type PolicyId = string & { readonly __brand: "PolicyId" };
 export type UsdcAmount = number;
 
 // ---------------------------------------------------------------------------
+// Base-first EVM architecture
+// ---------------------------------------------------------------------------
+
+export type EvmAddress = `0x${string}`;
+
+export type WalletRole =
+  | "human-owner"
+  | "treasury"
+  | "agent"
+  | "revenue"
+  | "burner-discovery";
+
+export interface EvmChainConfig {
+  chainId: number;
+  name: string;
+  slug: string;
+  nativeCurrency: "ETH";
+  dryRunByDefault: boolean;
+  enabled: boolean;
+}
+
+export const EVM_CHAINS = {
+  BASE: {
+    chainId: 8453,
+    name: "Base",
+    slug: "base",
+    nativeCurrency: "ETH",
+    dryRunByDefault: false,
+    enabled: true,
+  },
+  BASE_SEPOLIA: {
+    chainId: 84532,
+    name: "Base Sepolia",
+    slug: "base-sepolia",
+    nativeCurrency: "ETH",
+    dryRunByDefault: true,
+    enabled: true,
+  },
+  ETHEREUM: {
+    chainId: 1,
+    name: "Ethereum",
+    slug: "ethereum",
+    nativeCurrency: "ETH",
+    dryRunByDefault: true,
+    enabled: false,
+  },
+  ROBINHOOD_CHAIN: {
+    chainId: 4663,
+    name: "Robinhood Chain",
+    slug: "robinhood-chain",
+    nativeCurrency: "ETH",
+    dryRunByDefault: true,
+    enabled: false,
+  },
+} as const satisfies Record<string, EvmChainConfig>;
+
+export const DEFAULT_EVM_CHAIN = EVM_CHAINS.BASE;
+
+export interface WalletExecutionContext {
+  chainId: number;
+  walletRole: WalletRole;
+  walletAddress?: EvmAddress;
+  targetAddress?: EvmAddress;
+  functionSelector?: `0x${string}`;
+  tokenAddress?: EvmAddress;
+  tokenSymbol?: string;
+  approvalAmountUsdc?: UsdcAmount;
+  sessionKeyId?: string;
+  sessionExpiresAt?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Payment request
 // ---------------------------------------------------------------------------
 
@@ -32,6 +104,7 @@ export interface PaymentRequest {
   description: string;
   dryRun: boolean;
   requestedAt: string; // ISO 8601
+  execution?: WalletExecutionContext;
   metadata?: Record<string, unknown>;
 }
 
