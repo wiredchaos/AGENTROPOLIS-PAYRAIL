@@ -1,7 +1,7 @@
 {
   "name": "@agentropolis/x402-adapter",
-  "version": "0.1.0",
-  "description": "x402 / USDC settlement adapter stub for AGENTROPOLIS-PAYRAIL",
+  "version": "0.2.0",
+  "description": "Governed x402 settlement adapters for Base and XRPL",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@agentropolis/payrail-core": "workspace:*"
+    "@agentropolis/payrail-core": "workspace:*",
+    "x402-xrpl": "^0.3.0"
   },
   "devDependencies": {
     "typescript": "^5.5.0"
