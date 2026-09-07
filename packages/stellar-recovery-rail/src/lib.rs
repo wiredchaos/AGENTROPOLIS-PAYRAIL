@@ -12,7 +12,12 @@ pub enum AssetControl {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum Decision { Deny, Hold, RequireGuardianQuorum, Approve }
+pub enum Decision {
+    Deny,
+    Hold,
+    RequireGuardianQuorum,
+    Approve,
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Policy {
@@ -54,10 +59,18 @@ pub fn evaluate(policy: Policy, intent: Intent) -> Evaluation {
         recoverable_after_execution: is_recoverable_after(intent.asset_control),
     };
 
-    if !intent.mandate_valid { return deny("mandate_invalid"); }
-    if !intent.destination_allowed { return deny("destination_not_allowed"); }
-    if !intent.simulation_passed { return deny("simulation_failed"); }
-    if intent.anomaly_detected { return deny("anomaly_detected"); }
+    if !intent.mandate_valid {
+        return deny("mandate_invalid");
+    }
+    if !intent.destination_allowed {
+        return deny("destination_not_allowed");
+    }
+    if !intent.simulation_passed {
+        return deny("simulation_failed");
+    }
+    if intent.anomaly_detected {
+        return deny("anomaly_detected");
+    }
     if intent.amount_units == 0 || intent.amount_units > policy.max_transaction_units {
         return deny("transaction_limit_exceeded");
     }
@@ -68,7 +81,8 @@ pub fn evaluate(policy: Policy, intent: Intent) -> Evaluation {
         return deny("reserve_policy_invalid");
     }
 
-    let outflow_bps = intent.amount_units
+    let outflow_bps = intent
+        .amount_units
         .saturating_mul(10_000)
         .checked_div(intent.reserve_units)
         .unwrap_or(u128::MAX);
@@ -85,7 +99,10 @@ pub fn evaluate(policy: Policy, intent: Intent) -> Evaluation {
         };
     }
 
-    let irreversible = matches!(intent.asset_control, AssetControl::NativeXlm | AssetControl::ExternalIrreversible);
+    let irreversible = matches!(
+        intent.asset_control,
+        AssetControl::NativeXlm | AssetControl::ExternalIrreversible
+    );
     let high_value = intent.amount_units >= policy.guardian_threshold_units;
     if (irreversible || high_value) && intent.guardian_quorum == 0 {
         return deny("guardian_policy_invalid");
@@ -108,7 +125,10 @@ pub fn evaluate(policy: Policy, intent: Intent) -> Evaluation {
 }
 
 const fn is_recoverable_after(control: AssetControl) -> bool {
-    matches!(control, AssetControl::ClawbackEnabledStellarAsset | AssetControl::SorobanEscrow)
+    matches!(
+        control,
+        AssetControl::ClawbackEnabledStellarAsset | AssetControl::SorobanEscrow
+    )
 }
 
 #[cfg(test)]
@@ -146,7 +166,10 @@ mod tests {
         let mut candidate = intent();
         candidate.amount_units = 951;
         candidate.reserve_units = 1_000;
-        assert_eq!(evaluate(policy(), candidate).reason, "reserve_outflow_limit_exceeded");
+        assert_eq!(
+            evaluate(policy(), candidate).reason,
+            "reserve_outflow_limit_exceeded"
+        );
     }
 
     #[test]
@@ -170,7 +193,10 @@ mod tests {
         let mut candidate = intent();
         candidate.asset_control = AssetControl::NativeXlm;
         candidate.guardian_quorum = 0;
-        assert_eq!(evaluate(policy(), candidate).reason, "guardian_policy_invalid");
+        assert_eq!(
+            evaluate(policy(), candidate).reason,
+            "guardian_policy_invalid"
+        );
     }
 
     #[test]
